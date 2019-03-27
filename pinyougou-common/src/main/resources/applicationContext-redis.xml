@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- ################ 配置Redis单机版 #################-->
+    <!-- 配置Jedis连接工厂 -->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="${redis.host}"/>
+        <property name="port" value="${redis.port}"/>
+    </bean>
+
+    <!-- ################ 配置Redis集群版 #################-->
+    <!-- 配置次源属性源对象 -->
+    <bean id="propertySource" class="org.springframework.core.io.support.ResourcePropertySource">
+        <constructor-arg value="classpath:props/redis-cluster.properties"/>
+    </bean>
+    <!-- 配置Redis集群节点信息 -->
+    <bean id="clusterConfig" class="org.springframework.data.redis.connection.RedisClusterConfiguration">
+        <constructor-arg ref="propertySource"/>
+    </bean>
+    <!-- 配置Jedis连接工厂 -->
+    <!--<bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <constructor-arg ref="clusterConfig"/>
+    </bean>-->
+
+    <!-- 配置RedisTemplate -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+    </bean>
+</beans>
